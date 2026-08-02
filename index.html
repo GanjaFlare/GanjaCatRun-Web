@@ -1456,8 +1456,9 @@
       isSaving = true;
 
       // 🕐 ゲーム開始直後の一瞬など、sessionTokenがまだ届いていない場合は
-      // 少し待ってから再試行する（最大2秒 = 100ms × 20回）
-      if (!sessionToken && retriesLeft === undefined) retriesLeft = 20;
+      // 少し待ってから再試行する（最大5秒 = 100ms × 50回。Val Town経由で
+      // 往復が1段階増えた分、以前より長めに待つ）
+      if (!sessionToken && retriesLeft === undefined) retriesLeft = 50;
       if (!sessionToken && retriesLeft > 0) {
         setTimeout(function() {
           sendScoreToGAS(tId, sc, mode, wallet, playTime, retriesLeft - 1);
