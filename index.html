@@ -263,8 +263,8 @@
     let sessionToken = "";
     let isClaiming = false;
 
-    // 🌐 ブラウザ→Val Town(CORS対応の中継)→GAS、という経路で通信する
-    const GAS_API_URL = "https://ganjaflare--cb67d3568db811f196971607ee4eb77e.web.val.run";
+    // 🌐 ブラウザ→Cloudflare Workers(CORS対応の中継)→GAS、という経路で通信する
+    const GAS_API_URL = "https://ganjacatrun-proxy.ganjaflare.workers.dev";
 
     // GASのdoPostに action 付きJSONを送って、JSONで結果を受け取る共通関数
     // Content-Typeを "text/plain" にするのがポイント（CORSのプリフライトを回避するため）
