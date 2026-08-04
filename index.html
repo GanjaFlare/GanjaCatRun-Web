@@ -474,8 +474,6 @@
           ctx.fillText("SENDING CLAIM SIGNAL...", 120, 122);
           ctx.textAlign = "left";
           
-          isSaving = true;
-          startSavingAnimation("SENDING CLAIM SIGNAL");
           sendScoreToGAS(twitterId, score, gameMode, walletAddress, activePlayTime);
         };
         btnClaim.addEventListener("click", claimHandler);
@@ -1501,45 +1499,7 @@
       ctx.fillText("NOW SAVING SCORE...", 120, 122);
       ctx.textAlign = "left"; 
       
-      startSavingAnimation();
       sendScoreToGAS(twitterId, score, gameMode, "", activePlayTime);
-    }
-
-    // ⏳ くるくる回るスピナーと、後ろのドットを増減させて、動いている感を分かりやすくする
-    let savingAnimTimer = null;
-    let savingAnimStep = 0;
-    const savingSpinnerChars = ["-", "\\", "|", "/"];
-
-    function startSavingAnimation(label) {
-      var baseLabel = label || "NOW SAVING SCORE";
-      savingAnimStep = 0;
-      if (savingAnimTimer) clearInterval(savingAnimTimer);
-      savingAnimTimer = setInterval(function() {
-        if (!isSaving) {
-          stopSavingAnimation();
-          return;
-        }
-        savingAnimStep++;
-        var spinner = savingSpinnerChars[savingAnimStep % savingSpinnerChars.length];
-        var dots = ".".repeat(savingAnimStep % 4);
-        ctx.save();
-        // 前の表示を消してから描き直す(文字が重なって汚くならないように)
-        ctx.fillStyle = "rgba(0,0,0,0.75)";
-        ctx.fillRect(20, 114, 200, 12);
-        ctx.font = "bold 10px 'Courier New'";
-        ctx.fillStyle = "#ffffff";
-        ctx.textAlign = "center";
-        ctx.fillText(spinner + " " + baseLabel + dots + " " + spinner, 120, 122);
-        ctx.textAlign = "left";
-        ctx.restore();
-      }, 180);
-    }
-
-    function stopSavingAnimation() {
-      if (savingAnimTimer) {
-        clearInterval(savingAnimTimer);
-        savingAnimTimer = null;
-      }
     }
 
     function sendScoreToGAS(tId, sc, mode, wallet, playTime, retriesLeft) {
@@ -1591,7 +1551,6 @@
     function finishScoreSave() {
       isSaving = false; 
       isClaiming = false;
-      stopSavingAnimation();
       ctx.save();
       ctx.textAlign = "center";
       ctx.fillStyle = "rgba(0,0,0,0.7)"; ctx.fillRect(0, 106, 240, 54); 
