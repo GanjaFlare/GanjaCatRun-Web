@@ -264,19 +264,51 @@
     let sessionToken = "";
     let isClaiming = false;
 
-    // 🌐 ブラウザ→Cloudflare Workers(CORS対応の中継)→GAS、という経路で通信する
-    const GAS_API_URL = "https://ganjacatrun-proxy.ganjaflare.workers.dev";
+    // 🌐 中継サーバーを挟まず、ブラウザから直接GASを呼ぶ(JSONP方式)
+    // <script>タグ経由での読み込みはCORSの制約を受けないため、Cloudflare等の中継が不要になる
+    // (Cloudflare Workerはもう使っていない。スマホ回線で不安定だったため、より直接的な経路に変更)
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbw8pBDT-V2ZRDUiizbVN3phGUd1Ucb7P8qps-S9grPWsDOuJfYRZCOktrvXvSAEZFcf/exec";
 
-    // GASのdoPostに action 付きJSONを送って、JSONで結果を受け取る共通関数
-    // Content-Typeを "text/plain" にするのがポイント（CORSのプリフライトを回避するため）
+    let jsonpCallbackCounter = 0;
+
+    // GASのdoGetに action 付きのクエリパラメータを送って、JSONPで結果を受け取る共通関数
     function callGasApi(action, payload) {
-      var body = Object.assign({ action: action }, payload || {});
-      return fetch(GAS_API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(body)
-      }).then(function(res) {
-        return res.json();
+      return new Promise(function(resolve, reject) {
+        jsonpCallbackCounter++;
+        var callbackName = "gcrJsonp_" + jsonpCallbackCounter + "_" + Date.now();
+        var params = Object.assign({ action: action, callback: callbackName }, payload || {});
+
+        var query = Object.keys(params).map(function(key) {
+          return encodeURIComponent(key) + "=" + encodeURIComponent(params[key]);
+        }).join("&");
+
+        var script = document.createElement("script");
+        var timeoutId;
+
+        function cleanup() {
+          delete window[callbackName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+          clearTimeout(timeoutId);
+        }
+
+        window[callbackName] = function(data) {
+          cleanup();
+          resolve(data);
+        };
+
+        script.onerror = function() {
+          cleanup();
+          reject(new Error("通信に失敗しました(JSONP読み込みエラー)"));
+        };
+
+        // 🕐 20秒で諦めるタイムアウト(モバイル回線での遅延に余裕を持たせる)
+        timeoutId = setTimeout(function() {
+          cleanup();
+          reject(new Error("通信がタイムアウトしました"));
+        }, 20000);
+
+        script.src = GAS_API_URL + "?" + query;
+        document.body.appendChild(script);
       });
     }
 
