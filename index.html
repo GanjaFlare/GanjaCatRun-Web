@@ -471,9 +471,11 @@
           ctx.font = "bold 11px 'Courier New'";
           ctx.fillText(`YOU SCORED ${score} POINTS`, 120, 82);
           ctx.fillStyle = "#ffffff";
-          ctx.fillText("SENDING CLAIM SIGNAL...", 120, 122);
+          ctx.fillText("SENDING CLAIM SIGNAL...", 108, 122);
           ctx.textAlign = "left";
           
+          isSaving = true;
+          startSavingAnimation();
           sendScoreToGAS(twitterId, score, gameMode, walletAddress, activePlayTime);
         };
         btnClaim.addEventListener("click", claimHandler);
@@ -1496,10 +1498,48 @@
 
       ctx.font = "bold 10px 'Courier New'"; 
       ctx.fillStyle = "#ffffff";
-      ctx.fillText("NOW SAVING SCORE...", 120, 122);
+      ctx.textAlign = "center";
+      ctx.fillText("NOW SAVING SCORE...", 108, 122);
       ctx.textAlign = "left"; 
       
+      startSavingAnimation();
       sendScoreToGAS(twitterId, score, gameMode, "", activePlayTime);
+    }
+
+    // 🐱 「NOW SAVING SCORE...」の右側で、小さいキャラクターをテクテク歩かせる
+    let savingAnimTimer = null;
+    let savingAnimStep = 0;
+    let savingAnimBackup = null;
+    const SAVING_ANIM_X = 172, SAVING_ANIM_Y = 100, SAVING_ANIM_W = 40, SAVING_ANIM_H = 30;
+
+    function startSavingAnimation() {
+      savingAnimStep = 0;
+      // キャラクターを描く場所の「元の背景」を保存しておく(消すときに重ね塗りせず、これに戻す)
+      savingAnimBackup = ctx.getImageData(SAVING_ANIM_X, SAVING_ANIM_Y, SAVING_ANIM_W, SAVING_ANIM_H);
+      if (savingAnimTimer) clearInterval(savingAnimTimer);
+      savingAnimTimer = setInterval(function() {
+        if (!isSaving) {
+          stopSavingAnimation();
+          return;
+        }
+        savingAnimStep += 3;
+        ctx.save();
+        // 前のフレームのキャラクターを消す(重ね塗りではなく、元の背景に戻す)
+        if (savingAnimBackup) {
+          ctx.putImageData(savingAnimBackup, SAVING_ANIM_X, SAVING_ANIM_Y);
+        }
+        ctx.translate(178, 113);
+        ctx.scale(0.55, 0.55);
+        drawGanjaCat(0, 0, 'run', savingAnimStep);
+        ctx.restore();
+      }, 120);
+    }
+
+    function stopSavingAnimation() {
+      if (savingAnimTimer) {
+        clearInterval(savingAnimTimer);
+        savingAnimTimer = null;
+      }
     }
 
     function sendScoreToGAS(tId, sc, mode, wallet, playTime, retriesLeft) {
@@ -1551,6 +1591,7 @@
     function finishScoreSave() {
       isSaving = false; 
       isClaiming = false;
+      stopSavingAnimation();
       ctx.save();
       ctx.textAlign = "center";
       ctx.fillStyle = "rgba(0,0,0,0.7)"; ctx.fillRect(0, 106, 240, 54); 
