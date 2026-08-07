@@ -340,6 +340,12 @@
     let leaderboardData = [null, null, null];
     let clouds = [];
     let groundDots = [];
+    // 🌥️ ページを開いた瞬間に1回だけ生成しておく(演出中に雲が見えないと、
+    //    ゲーム開始時に「いきなり湧いて出る」ように見えてしまうため)
+    for (let i = 0; i < 4; i++) clouds.push({x: Math.random()*240, y: 15 + Math.random()*30, speed: 0.2 + Math.random()*0.4, width: 20 + Math.random()*20});
+    for (let i = 0; i < 30; i++) groundDots.push({x: Math.random()*240, y: 135 + Math.random()*20, width: 1 + Math.random()*3});
+    for(let i=0; i<4; i++) clouds.push({x: Math.random()*240, y: 15 + Math.random()*30, speed: 0.2 + Math.random()*0.4, width: 20 + Math.random()*20});
+    for(let i=0; i<30; i++) groundDots.push({x: Math.random()*240, y: 135 + Math.random()*20, width: 1 + Math.random()*3});
     let particles = [];
     let isExploding = false;
 
@@ -678,6 +684,27 @@
           osc.start(); osc.stop(audioCtx.currentTime + 1.0);
           osc2.start(); osc2.stop(audioCtx.currentTime + 1.0);
         }
+        else if (type === 'teleport') {
+          // 🌀 ビーム降下音：低い音から一気に駆け上がる「シュー」
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(1600, audioCtx.currentTime + 0.32);
+          gain.gain.setValueAtTime(0.22, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.34);
+          osc.start(); osc.stop(audioCtx.currentTime + 0.34);
+
+          // 着地の「ボン」という短いチャイム音
+          const osc2 = audioCtx.createOscillator();
+          const gain2 = audioCtx.createGain();
+          osc2.connect(gain2); gain2.connect(audioCtx.destination);
+          osc2.type = 'triangle';
+          osc2.frequency.setValueAtTime(900, audioCtx.currentTime + 0.3);
+          osc2.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.5);
+          gain2.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+          gain2.gain.setValueAtTime(0.3, audioCtx.currentTime + 0.3);
+          gain2.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.55);
+          osc2.start(audioCtx.currentTime + 0.3); osc2.stop(audioCtx.currentTime + 0.55);
+        }
       } catch (e) {
       }
     }
@@ -881,6 +908,88 @@
       ctx.textAlign = "left";
     }
 
+    // 🌀 初回プレイ前だけの「READY→ビーム降下→着地」演出(ロックマン風)
+    function playIntroSequence(onComplete) {
+      const LANDING_X = 20, LANDING_Y = 115;
+      let step = 0;
+      let stepStartTime = performance.now();
+      // 🧊 演出中は背景(雲・地面)が動かないよう、一時的にポーズ扱いにする
+      //    (resetGame()が呼ばれる時に自動でfalseに戻る)
+      isPaused = true;
+
+      function drawSceneBackground() {
+        ctx.fillStyle = (gameMode === 'HELL') ? "#2d0202" : "#8b956d";
+        ctx.fillRect(0, 0, 240, 160);
+        drawClouds();
+        drawGround();
+      }
+
+      function frame(now) {
+        const elapsed = now - stepStartTime;
+
+        if (step === 0) {
+          // READYを5回点滅させる(200msごとに切り替え、合計1000ms)
+          drawSceneBackground();
+          const blinkIndex = Math.floor(elapsed / 200);
+          if (blinkIndex % 2 === 0) {
+            ctx.font = "bold 16px 'Courier New'";
+            ctx.fillStyle = "#ffffff";
+            ctx.textAlign = "center";
+            ctx.fillText("READY", 120, 82);
+            ctx.textAlign = "left";
+          }
+          if (elapsed >= 1000) {
+            step = 1;
+            stepStartTime = now;
+            playSound('teleport');
+          }
+        } else if (step === 1) {
+          // ビームが空から着地点まで一気に降りてくる(320ms)
+          drawSceneBackground();
+          const progress = Math.min(elapsed / 320, 1);
+          const beamBottom = progress * (LANDING_Y + 4);
+          ctx.fillStyle = "#eafcff";
+          ctx.fillRect(LANDING_X + 8, 0, 6, beamBottom);
+          ctx.fillStyle = "rgba(120, 230, 255, 0.5)";
+          ctx.fillRect(LANDING_X + 5, 0, 12, beamBottom);
+          if (progress >= 1) {
+            step = 2;
+            stepStartTime = now;
+          }
+        } else if (step === 2) {
+          // 着地の瞬間:シアン色のシルエットでパッと実体化(180ms)
+          drawSceneBackground();
+          ctx.fillStyle = "rgba(120, 230, 255, 0.35)";
+          ctx.beginPath();
+          ctx.ellipse(LANDING_X + 11, LANDING_Y + 18, 16, 5, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.save();
+          ctx.globalAlpha = 0.85;
+          ctx.filter = "brightness(2) saturate(0.3)";
+          drawGanjaCat(LANDING_X, LANDING_Y, 'run', 0);
+          ctx.restore();
+          if (elapsed >= 180) {
+            step = 3;
+            stepStartTime = now;
+          }
+        } else if (step === 3) {
+          // 通常の色にパッと切り替わって、少し余韻を残して終了(150ms)
+          drawSceneBackground();
+          drawGanjaCat(LANDING_X, LANDING_Y, 'run', 0);
+          if (elapsed >= 150) {
+            onComplete();
+            return;
+          }
+        }
+
+        requestAnimationFrame(frame);
+      }
+
+      requestAnimationFrame(frame);
+    }
+
+    let introPlayed = false;
+
     function startGame() { 
       const overlay = document.getElementById("setupOverlay");
       if (overlay) overlay.style.display = "none";
@@ -889,6 +998,16 @@
       
       if (gameMode === 'HELL' && gameOver) {
         startRevivalRitual();
+        return;
+      }
+
+      if (!introPlayed) {
+        introPlayed = true;
+        playIntroSequence(function() {
+          resetGame(); 
+          isPlaying = true; 
+          gameLoop(); 
+        });
         return;
       }
 
@@ -906,6 +1025,8 @@
       gameOver = false;
       isExploding = false;
       isReviving = false;
+      // 🌀 モード選択画面に戻ったので、次にモードを選んだ時にまた演出が出るようにする
+      introPlayed = false;
     }
     
     function resetGame() { 
@@ -943,10 +1064,13 @@
       currentStamina = maxStamina; 
       jumpBufferCounter = 0;
 
-      clouds = [];
-      for(let i=0; i<4; i++) clouds.push({x: Math.random()*240, y: 15 + Math.random()*30, speed: 0.2 + Math.random()*0.4, width: 20 + Math.random()*20});
-      groundDots = [];
-      for(let i=0; i<30; i++) groundDots.push({x: Math.random()*240, y: 135 + Math.random()*20, width: 1 + Math.random()*3});
+      // 🌥️ すでに雲・地面の模様があれば、そのまま使う(演出からの続きが自然に見えるように)
+      if (clouds.length === 0) {
+        for(let i=0; i<4; i++) clouds.push({x: Math.random()*240, y: 15 + Math.random()*30, speed: 0.2 + Math.random()*0.4, width: 20 + Math.random()*20});
+      }
+      if (groundDots.length === 0) {
+        for(let i=0; i<30; i++) groundDots.push({x: Math.random()*240, y: 135 + Math.random()*20, width: 1 + Math.random()*3});
+      }
     }
 
     // 🔄 トークン取得に失敗しても、自動で数回リトライする
