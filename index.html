@@ -359,6 +359,13 @@
     }
 
     function initializeEvents() {
+      // 🔥 ページを開いた瞬間に、GASを軽く1回呼んで「起こして」おく
+      //    (GASはしばらく使われないと次のリクエストが遅くなることがあるため、
+      //     実際にプレイが始まる前の、ユーザー名入力中などの時間で先に温めておく)
+      callGasApi("startSession").catch(function() {
+        // 結果は使わない(実際のプレイ開始時に、resetGame()側で改めて取得し直すため)
+      });
+
       try {
         if (typeof window.localStorage !== 'undefined' && window.localStorage) {
           const savedId = window.localStorage.getItem('ganjaCatRunId');
