@@ -208,7 +208,6 @@
         </div>
 
         <div id="setupOverlay" class="overlay">
-          <h1 id="offlineBadge" style="display:none; color:#ff4444; font-size: 20px; margin-bottom: 8px; letter-spacing: 2px;">OFFLINE MODE</h1>
           <h1 style="color:#10b981; font-size: 28px; margin-bottom: 5px;">GanjaCatRun</h1>
           <p style="font-size: 11px; margin-bottom: 15px;">Enter X (Twitter) ID to Start</p>
           
@@ -323,54 +322,6 @@
     }
 
     let activePlayTime = 0;      // 累積アクティブプレイ時間（ミリ秒）
-    let isOfflineMode = false;
-
-    // 🔌 ページを開いた瞬間の接続確認。navigator.onLineによる即判定＋
-    //    GASへの短いタイムアウト(4秒)の接続確認、どちらかがダメならオフラインモードへ
-    function checkConnectivityAndSetup() {
-      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-        enterOfflineMode();
-        return;
-      }
-
-      return new Promise(function(resolve, reject) {
-        var callbackName = "gcrProbe_" + Date.now();
-        var script = document.createElement("script");
-        var timeoutId;
-
-        function cleanup() {
-          delete window[callbackName];
-          if (script.parentNode) script.parentNode.removeChild(script);
-          clearTimeout(timeoutId);
-        }
-
-        window[callbackName] = function(data) {
-          cleanup();
-          resolve(data);
-        };
-        script.onerror = function() {
-          cleanup();
-          reject(new Error("接続確認に失敗"));
-        };
-        timeoutId = setTimeout(function() {
-          cleanup();
-          reject(new Error("接続確認がタイムアウト"));
-        }, 4000);
-
-        script.src = GAS_API_URL + "?action=startSession&callback=" + callbackName;
-        document.body.appendChild(script);
-      }).catch(function() {
-        enterOfflineMode();
-      });
-    }
-
-    function enterOfflineMode() {
-      isOfflineMode = true;
-      var badge = document.getElementById("offlineBadge");
-      if (badge) badge.style.display = "block";
-    }
-
-
     let lastFrameTimestamp = null;
     let twitterId="", isPlaying=false, gameOver=false, score=0, hiScore=0, playerY=115, playerVelocityY=0, isJumping=false, obstacles=[], coins=[], gameSpeed=4.5, frameCount=0;
     let isSaving = false;
@@ -423,11 +374,11 @@
     }
 
     function initializeEvents() {
-      checkConnectivityAndSetup();
-
-      // 🔌 オフライン→オンラインに切り替わったら、ページを再読み込みして通常モードに戻す
-      window.addEventListener('online', function() {
-        location.reload();
+      // 🔥 ページを開いた瞬間に、GASを軽く1回呼んで「起こして」おく
+      //    (GASはしばらく使われないと次のリクエストが遅くなることがあるため、
+      //     実際にプレイが始まる前の、ユーザー名入力中などの時間で先に温めておく)
+      callGasApi("startSession").catch(function() {
+        // 結果は使わない(実際のプレイ開始時に、resetGame()側で改めて取得し直すため)
       });
 
       try {
@@ -1088,11 +1039,9 @@
       lastFrameTimestamp = null;
 
       // 🔑 ゲームが(再)スタートするたびに、新しいセッショントークンを発行してもらう
-      // （モード選択からでも、その場のリトライからでも、必ずここを通る。オフライン時は不要）
+      // （モード選択からでも、その場のリトライからでも、必ずここを通る）
       sessionToken = "";
-      if (!isOfflineMode) {
-        requestNewSessionToken();
-      }
+      requestNewSessionToken();
       
       const statusMsg = document.getElementById("statusMessage");
       if (statusMsg) {
@@ -1656,23 +1605,6 @@
 
     function showGameOverUI(isClear) {
       if (isClear) {
-        if (isOfflineMode) {
-          // 🔌 オフライン時：報酬画面は出さず、その場で完結するメッセージだけ表示
-          ctx.fillStyle = "rgba(0,0,0,0.5)"; ctx.fillRect(0,0,240,160);
-          ctx.textAlign = "center";
-          ctx.fillStyle = "#FFD700"; ctx.font = "bold 18px 'Courier New'";
-          ctx.fillText("GAME CLEAR!!", 120, 60);
-          ctx.font = "bold 11px 'Courier New'";
-          ctx.fillStyle = "#fff";
-          ctx.fillText(`YOU SCORED ${score} POINTS`, 120, 82);
-          ctx.fillStyle = "#ff4444";
-          ctx.font = "bold 10px 'Courier New'";
-          ctx.fillText("OFFLINE - NOT SAVED", 120, 105);
-          ctx.textAlign = "left";
-          isSaving = false;
-          finishScoreSave();
-          return;
-        }
         const rewardOverlay = document.getElementById("rewardOverlay");
         if (rewardOverlay) {
           rewardOverlay.style.display = "flex";
@@ -1701,18 +1633,6 @@
           ctx.fillText(`[ LV.${actualLevel} ]`, 120, 98);
         }
       } catch (err) {}
-
-      if (isOfflineMode) {
-        // 🔌 オフライン時：通信を一切試みず、その場でメッセージだけ表示して即再開可能にする
-        ctx.font = "bold 10px 'Courier New'"; 
-        ctx.fillStyle = "#ff4444";
-        ctx.textAlign = "center";
-        ctx.fillText("OFFLINE - SCORE NOT SAVED", 120, 122);
-        ctx.textAlign = "left"; 
-        isSaving = false;
-        finishScoreSave();
-        return;
-      }
 
       isSaving = true;
 
