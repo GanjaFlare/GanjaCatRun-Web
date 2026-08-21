@@ -185,7 +185,11 @@
         </div>
 
         <div id="setupOverlay" class="overlay">
-          <h1 style="color:#10b981; font-size: 28px; margin-bottom: 5px;">GanjaCatRun</h1>
+          <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:0;">
+            <h1 style="color:#10b981; font-size: 28px; margin-bottom: 5px;">GanjaCatRun</h1>
+            <canvas id="titleCoinCanvas" width="30" height="30" style="image-rendering: pixelated; margin-bottom: 5px;"></canvas>
+          </div>
+          <canvas id="titleWalkCanvas" width="200" height="50" style="image-rendering: pixelated; margin: 2px 0 8px;"></canvas>
           <p style="font-size: 11px; margin-bottom: 15px;">Enter X (Twitter) ID to Start</p>
           
           <div class="input-wrapper">
@@ -790,6 +794,95 @@
     function drawRock(x, y) { ctx.fillStyle = "#444"; ctx.fillRect(x, y, 20, 16); ctx.fillStyle = "#666"; ctx.fillRect(x+2, y+2, 6, 6); ctx.fillRect(x+12, y+8, 5, 5); ctx.fillStyle = "#222"; ctx.fillRect(x+5, y+10, 8, 4); }
     function drawCrow(x, y, frame) { ctx.fillStyle = "#111"; ctx.fillRect(x, y, 16, 8); ctx.fillRect(x - 5, y - 2, 6, 6); ctx.fillStyle="#ff8c00"; ctx.fillRect(x-8, y, 3, 2); ctx.fillStyle = "#111"; if (frame % 30 < 15) { ctx.fillRect(x+3, y - 6, 10, 6); } else { ctx.fillRect(x+3, y + 4, 10, 6); } }
     function drawGanjaCoin(x, y) { ctx.fillStyle = "#ffd700"; ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = "#b8860b"; ctx.lineWidth=1; ctx.stroke(); ctx.fillStyle = "#10b981"; ctx.fillRect(x-1, y-6, 2, 12); ctx.fillRect(x-5, y-2, 10, 2); ctx.fillRect(x-4, y-4, 2, 2); ctx.fillRect(x+2, y-4, 2, 2); ctx.fillRect(x-3, y+2, 2, 2); ctx.fillRect(x+1, y+2, 2, 2); }
+
+    // 🪙🐈 タイトル(モード選択)画面用：コイン表示 + キャラクターが左右にてくてく歩くアニメーション
+    // (本編のゲームロジック・ctx とは完全に独立した、専用の小さいcanvasで動かす)
+    (function() {
+      const coinCanvas = document.getElementById('titleCoinCanvas');
+      const walkCanvas = document.getElementById('titleWalkCanvas');
+      if (!coinCanvas || !walkCanvas) return;
+
+      const coinCtx = coinCanvas.getContext('2d');
+      const walkCtx = walkCanvas.getContext('2d');
+
+      function drawTitleCoin() {
+        coinCtx.clearRect(0, 0, 30, 30);
+        coinCtx.fillStyle = "#ffd700";
+        coinCtx.beginPath();
+        coinCtx.arc(15, 15, 13, 0, Math.PI * 2);
+        coinCtx.fill();
+        coinCtx.strokeStyle = "#b8860b";
+        coinCtx.lineWidth = 2;
+        coinCtx.stroke();
+        coinCtx.fillStyle = "#10b981";
+        coinCtx.fillRect(14, 6, 3, 18);
+        coinCtx.fillRect(7, 13, 16, 3);
+        coinCtx.fillRect(9, 9, 3, 3);
+        coinCtx.fillRect(18, 9, 3, 3);
+        coinCtx.fillRect(11, 19, 3, 3);
+        coinCtx.fillRect(16, 19, 3, 3);
+      }
+      drawTitleCoin();
+
+      const CAT_W = 24, MARGIN = 10, SPEED = 0.6;
+      let catX = (200 - CAT_W) / 2;
+      let direction = 1; // 1:右へ, -1:左へ
+      let walkFrame = 0;
+      let rafId = null;
+
+      function drawTitleCat(x, y, frame, facingRight) {
+        walkCtx.save();
+        if (!facingRight) {
+          // 左向きのときは水平反転して描く(通常は右向きの絵として描いているため)
+          walkCtx.translate(x * 2 + CAT_W, 0);
+          walkCtx.scale(-1, 1);
+        }
+        const bodyColor = "#87CEEB", stripeColor = "#4169E1", eyeColor = "#ffffff";
+        walkCtx.fillStyle = bodyColor; walkCtx.fillRect(x, y, 22, 14);
+        walkCtx.fillStyle = stripeColor; walkCtx.fillRect(x + 4, y, 3, 14); walkCtx.fillRect(x + 11, y, 3, 14);
+        const hx = x + 16, hy = y - 10;
+        walkCtx.fillStyle = bodyColor; walkCtx.fillRect(hx, hy, 12, 12);
+        walkCtx.fillStyle = stripeColor; walkCtx.fillRect(hx + 4, hy, 2, 4);
+        walkCtx.fillStyle = bodyColor; walkCtx.fillRect(hx + 2, hy - 3, 3, 3); walkCtx.fillRect(hx + 9, hy - 3, 3, 3);
+        walkCtx.fillStyle = eyeColor; walkCtx.fillRect(hx + 2, hy + 2, 4, 4); walkCtx.fillRect(hx + 7, hy + 2, 4, 4);
+        walkCtx.fillStyle = "#9370DB"; walkCtx.fillRect(hx + 3, hy + 3, 1, 1); walkCtx.fillRect(hx + 8, hy + 3, 1, 1);
+        walkCtx.fillStyle = "#ffffff"; walkCtx.fillRect(x + 28, y - 2, 6, 2);
+        walkCtx.fillStyle = bodyColor;
+        if (frame % 20 < 10) {
+          walkCtx.fillRect(x + 1, y + 14, 4, 4); walkCtx.fillRect(x + 12, y + 14, 4, 4);
+        } else {
+          walkCtx.fillRect(x + 5, y + 14, 4, 4); walkCtx.fillRect(x + 17, y + 14, 4, 4);
+        }
+        walkCtx.restore();
+      }
+
+      function isTitleVisible() {
+        const overlay = document.getElementById('setupOverlay');
+        return !!overlay && overlay.style.display !== 'none';
+      }
+
+      function tickTitleWalk() {
+        if (!isTitleVisible()) { rafId = null; return; }
+        walkCtx.clearRect(0, 0, 200, 50);
+        catX += SPEED * direction;
+        walkFrame++;
+        if (catX > 200 - CAT_W - MARGIN) direction = -1;
+        if (catX < MARGIN) direction = 1;
+        drawTitleCat(catX, 12, walkFrame, direction === 1);
+        rafId = requestAnimationFrame(tickTitleWalk);
+      }
+
+      // タイトル画面が(再)表示されるたびにアニメーションを再開する
+      setInterval(function() {
+        if (isTitleVisible() && rafId === null) {
+          rafId = requestAnimationFrame(tickTitleWalk);
+        }
+      }, 300);
+
+      if (isTitleVisible()) {
+        rafId = requestAnimationFrame(tickTitleWalk);
+      }
+    })();
 
     function drawDiamond(x, y) {
       ctx.fillStyle = "#00FFFF";
