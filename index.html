@@ -12,6 +12,9 @@
   <link rel="icon" type="image/png" href="icon.png">
   <!-- 📱 Brave・Android Chrome等が参照するWebアプリマニフェスト -->
   <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   <meta name="theme-color" content="#0f172a">
   <style>
     body { 
@@ -43,21 +46,50 @@
     .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.98); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; text-align: center; border-radius: 10px 10px 40px 10px;}
     
     .input-wrapper { position: relative; width: 80%; margin-bottom: 8px; display: flex; align-items: center; }
-    .input-at { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #10b981; font-size: 16px; font-weight: bold; pointer-events: none; z-index: 10; }
-    input[type="text"] { width: 100%; padding: 12px 35px; border-radius: 5px; border: 2px solid #10b981; background: #0f172a; color: #fff; font-size: 16px; text-align: left; box-sizing: border-box; }
+    .input-at { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #34d399; font-size: 16px; font-weight: bold; pointer-events: none; z-index: 10; }
+    input[type="text"] {
+      width: 100%; padding: 12px 35px; border-radius: 8px; border: 2px solid #10b981;
+      background: #0f172a; color: #fff; font-size: 16px; text-align: left; box-sizing: border-box;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700;
+      box-shadow: 0 0 14px rgba(52, 211, 153, 0.25);
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    input[type="text"]:focus { outline: none; border-color: #34d399; box-shadow: 0 0 22px rgba(52, 211, 153, 0.45); }
     .clear-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #ef4444; font-size: 20px; font-weight: bold; cursor: pointer; z-index: 10; }
-    
-    .remember-wrapper { width: 80%; text-align: left; margin-bottom: 12px; display: flex; align-items: center; gap: 5px; font-size: 11px; }
-    .remember-wrapper label { cursor: pointer; }
 
-    .mode-buttons { display: flex; gap: 8px; width: 80%; flex-direction: column; }
-    .start-btn { color: white; border: none; padding: 10px 20px; font-size: 13px; font-weight: bold; cursor: pointer; border-radius: 5px; width: 100%; touch-action: manipulation; }
-    .normal-btn { background: #3b82f6; box-shadow: 0 4px 0 #2563eb; }
-    .normal-btn:active { transform: translateY(4px); box-shadow: 0 0px 0 #2563eb; }
-    .boost-btn { background: #ef4444; box-shadow: 0 4px 0 #dc2626; }
-    .boost-btn:active { transform: translateY(4px); box-shadow: 0 0px 0 #dc2626; }
-    .hell-btn { background: #7f1d1d; box-shadow: 0 4px 0 #450a0a; }
-    .hell-btn:active { transform: translateY(4px); box-shadow: 0 0px 0 #450a0a; }
+    .remember-wrapper { width: 80%; text-align: left; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; font-size: 11px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; letter-spacing: 0.2px; color: #d1fae5; }
+    .remember-wrapper label { cursor: pointer; }
+    .remember-wrapper input[type="checkbox"] { accent-color: #34d399; }
+
+    .mode-buttons { display: flex; gap: 10px; width: 80%; flex-direction: column; }
+    .start-btn {
+      border: 2px solid transparent; padding: 14px 20px; font-size: 14px; cursor: pointer;
+      border-radius: 10px; width: 100%; touch-action: manipulation;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; letter-spacing: 0.4px;
+      background-color: #0f172a;
+      color: #ffffff;
+      transition: transform 0.12s, box-shadow 0.12s, filter 0.12s;
+    }
+    .start-btn:active { transform: translateY(2px) scale(0.99); filter: brightness(1.15); }
+
+    .normal-btn {
+      border-color: #3b82f6;
+      background: linear-gradient(135deg, rgba(59,130,246,0.22) 0%, #0f172a 70%);
+      box-shadow: 0 0 18px rgba(59, 130, 246, 0.35), inset 0 0 16px rgba(59, 130, 246, 0.08);
+      text-shadow: 0 0 10px rgba(96, 165, 250, 0.8);
+    }
+    .boost-btn {
+      border-color: #ef4444;
+      background: linear-gradient(135deg, rgba(239,68,68,0.22) 0%, #0f172a 70%);
+      box-shadow: 0 0 18px rgba(239, 68, 68, 0.35), inset 0 0 16px rgba(239, 68, 68, 0.08);
+      text-shadow: 0 0 10px rgba(248, 113, 113, 0.8);
+    }
+    .hell-btn {
+      border-color: #b91c1c;
+      background: linear-gradient(135deg, rgba(185,28,28,0.28) 0%, #0f172a 70%);
+      box-shadow: 0 0 18px rgba(185, 28, 28, 0.45), inset 0 0 16px rgba(185, 28, 28, 0.12);
+      text-shadow: 0 0 10px rgba(248, 113, 113, 0.8);
+    }
 
     .dpad { position: absolute; left: 35px; bottom: 180px; width: 80px; height: 80px; cursor: pointer; z-index: 5; }
     .dpad-axis { position: absolute; background: #2b2b2b; border-radius: 3px; box-shadow: 0 4px 0 #111; }
@@ -89,22 +121,28 @@
       position: absolute;
       bottom: 25px;
       left: 25px;
-      background: #7b7b77;
-      color: #111;
-      border: 2px solid #555;
-      border-radius: 5px;
-      padding: 6px 12px;
-      font-family: 'Courier New', monospace;
+      background: #0f172a;
+      color: #64748b;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      padding: 7px 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 11px;
-      font-weight: bold;
+      font-weight: 700;
+      letter-spacing: 0.3px;
       cursor: pointer;
       z-index: 300;
-      box-shadow: 0 2px 0 #444;
+      box-shadow: none;
       outline: none;
+      transition: color 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.12s;
+    }
+    .music-btn.is-on {
+      color: #6ee7b7;
+      border-color: #34d399;
+      box-shadow: 0 0 14px rgba(52, 211, 153, 0.4), inset 0 0 10px rgba(52, 211, 153, 0.1);
     }
     .music-btn:active {
-      transform: translateY(2px);
-      box-shadow: 0 0px 0 #444;
+      transform: translateY(1px) scale(0.98);
     }
 
     #statusMessage { position: absolute; color: #333; font-size: 11px; bottom: 20px; font-weight: bold; width: 80%; text-align: center; z-index: 200; pointer-events: none;}
@@ -130,6 +168,18 @@
       transform: translateY(1px);
       box-shadow: 0px 0px 0px rgba(0,0,0,0);
       background: rgba(0, 0, 0, 0.8);
+    }
+
+    /* 🌿 タイトル文字：白→エメラルドグリーンのグラデーション + ネオン風の光彩 */
+    .title-glow {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      margin: 0;
+      background: linear-gradient(135deg, #ffffff 0%, #34d399 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 20px rgba(52, 211, 153, 0.3);
     }
   </style>
 </head>
@@ -186,11 +236,10 @@
 
         <div id="setupOverlay" class="overlay">
           <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:0;">
-            <h1 style="color:#10b981; font-size: 28px; margin-bottom: 5px;">GanjaCatRun</h1>
-            <canvas id="titleCoinCanvas" width="30" height="30" style="image-rendering: pixelated; margin-bottom: 5px;"></canvas>
+            <h1 class="title-glow" style="font-size: 28px; margin-bottom: 5px;">GanjaCatRun</h1>
           </div>
           <canvas id="titleWalkCanvas" width="200" height="50" style="image-rendering: pixelated; margin: 2px 0 8px;"></canvas>
-          <p style="font-size: 11px; margin-bottom: 15px;">Enter X (Twitter) ID to Start</p>
+          <p style="font-size: 11px; margin-bottom: 15px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; letter-spacing: 0.3px; color: #a7f3d0;">Enter X (Twitter) ID to Start</p>
           
           <div class="input-wrapper">
             <span class="input-at">@</span>
@@ -419,6 +468,7 @@
         btnMusicToggle.addEventListener("click", function(e) {
           isMusicOn = !isMusicOn;
           this.innerText = isMusicOn ? "🎵 ON" : "🎵 OFF";
+          this.classList.toggle("is-on", isMusicOn);
           
           const bgm = document.getElementById("bgmMusic");
           if (bgm) {
@@ -795,34 +845,13 @@
     function drawCrow(x, y, frame) { ctx.fillStyle = "#111"; ctx.fillRect(x, y, 16, 8); ctx.fillRect(x - 5, y - 2, 6, 6); ctx.fillStyle="#ff8c00"; ctx.fillRect(x-8, y, 3, 2); ctx.fillStyle = "#111"; if (frame % 30 < 15) { ctx.fillRect(x+3, y - 6, 10, 6); } else { ctx.fillRect(x+3, y + 4, 10, 6); } }
     function drawGanjaCoin(x, y) { ctx.fillStyle = "#ffd700"; ctx.beginPath(); ctx.arc(x, y, 9, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = "#b8860b"; ctx.lineWidth=1; ctx.stroke(); ctx.fillStyle = "#10b981"; ctx.fillRect(x-1, y-6, 2, 12); ctx.fillRect(x-5, y-2, 10, 2); ctx.fillRect(x-4, y-4, 2, 2); ctx.fillRect(x+2, y-4, 2, 2); ctx.fillRect(x-3, y+2, 2, 2); ctx.fillRect(x+1, y+2, 2, 2); }
 
-    // 🪙🐈 タイトル(モード選択)画面用：コイン表示 + キャラクターが左右にてくてく歩くアニメーション
+    // 🐈 タイトル(モード選択)画面用：キャラクターが左右にてくてく歩くアニメーション
     // (本編のゲームロジック・ctx とは完全に独立した、専用の小さいcanvasで動かす)
     (function() {
-      const coinCanvas = document.getElementById('titleCoinCanvas');
       const walkCanvas = document.getElementById('titleWalkCanvas');
-      if (!coinCanvas || !walkCanvas) return;
+      if (!walkCanvas) return;
 
-      const coinCtx = coinCanvas.getContext('2d');
       const walkCtx = walkCanvas.getContext('2d');
-
-      function drawTitleCoin() {
-        coinCtx.clearRect(0, 0, 30, 30);
-        coinCtx.fillStyle = "#ffd700";
-        coinCtx.beginPath();
-        coinCtx.arc(15, 15, 13, 0, Math.PI * 2);
-        coinCtx.fill();
-        coinCtx.strokeStyle = "#b8860b";
-        coinCtx.lineWidth = 2;
-        coinCtx.stroke();
-        coinCtx.fillStyle = "#10b981";
-        coinCtx.fillRect(14, 6, 3, 18);
-        coinCtx.fillRect(7, 13, 16, 3);
-        coinCtx.fillRect(9, 9, 3, 3);
-        coinCtx.fillRect(18, 9, 3, 3);
-        coinCtx.fillRect(11, 19, 3, 3);
-        coinCtx.fillRect(16, 19, 3, 3);
-      }
-      drawTitleCoin();
 
       const CAT_W = 24, MARGIN = 10, SPEED = 0.6;
       let catX = (200 - CAT_W) / 2;
