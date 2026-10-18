@@ -1778,10 +1778,13 @@
         return;
       }
 
-      // 🛟 保険：8秒たっても応答が返ってこなければ、強制的にフリーズを解除する
+      // 🎁 ウォレットアドレス付き＝クリア報酬のクレーム。それ以外は通常のスコア保存
+      var isClaim = !!wallet;
+
+      // 🛟 保険：22秒たっても応答が返ってこなければ、強制的にフリーズを解除する
       var safetyTimer = setTimeout(function() {
         if (isSaving) {
-          console.warn("[DEBUG] 8秒タイムアウトで強制解除。使用したtoken:", sessionToken, new Date().toISOString());
+          console.warn("[DEBUG] 22秒タイムアウトで強制解除。使用したtoken:", sessionToken, new Date().toISOString());
           finishScoreSave();
         }
       }, 22000);
@@ -1799,13 +1802,22 @@
         clearTimeout(safetyTimer);
         console.log("[DEBUG] submitScoreFromGame 応答受信:", JSON.stringify(response), new Date().toISOString());
         if (response && response.status === "error") {
-          alert("⚠️ エラーが発生しました！\n詳細: " + response.message + "\n※スコアは保存されています。");
+          if (isClaim) {
+            alert("⚠️ 報酬の送信に失敗した可能性があります。\n詳細: " + response.message + "\n※届いていない場合はお知らせください。");
+          } else {
+            // サーバーが書き込み前に弾いた場合(セッション無効など)は、スコアが保存されていない
+            alert("⚠️ エラーが発生しました。\n詳細: " + response.message + "\n※今回のスコアは保存されなかった可能性があります。");
+          }
         }
         finishScoreSave();
       }).catch(function(error){
         clearTimeout(safetyTimer);
         console.error("[DEBUG] submitScoreFromGame 通信失敗:", error, new Date().toISOString());
-        alert("⚠️ 通信エラーが発生しました！\n詳細: " + (error && error.message ? error.message : error) + "\n※スコアは保存されている可能性があります。");
+        if (isClaim) {
+          // 報酬クレームの通信失敗は、黙って進めると「届いた」と誤解されるので必ず知らせる
+          alert("⚠️ 通信エラーが発生しました。\n詳細: " + (error && error.message ? error.message : error) + "\n※報酬の送信を確認できませんでした。届いていない場合はお知らせください。");
+        }
+        // 通常のゲームオーバー時は、プレイヤーにできることがないので警告は出さず、そのまま次へ進む
         finishScoreSave();
       });
     }
