@@ -506,6 +506,7 @@
           ctx.fillText("GAME CLEAR!!", 120, 60);
           ctx.font = "bold 11px 'Courier New'";
           ctx.fillText(`YOU SCORED ${score} POINTS`, 120, 82);
+          captureSavingArea();
           ctx.fillStyle = "#ffffff";
           ctx.fillText("SENDING CLAIM SIGNAL...", 108, 122);
           ctx.textAlign = "left";
@@ -1718,6 +1719,7 @@
 
       isSaving = true;
 
+      captureSavingArea();
       ctx.font = "bold 10px 'Courier New'"; 
       ctx.fillStyle = "#ffffff";
       ctx.textAlign = "center";
@@ -1732,6 +1734,12 @@
     let savingAnimTimer = null;
     let savingAnimStep = 0;
     let savingAnimBackup = null;
+    // 🖼️ 「保存中」の文字を出す前の、画面下部(y=106〜)の元の絵を保存しておく。
+    //    保存完了時に、黒い帯を重ねず、これに戻して「NOW SAVING SCORE...」を消すために使う
+    let savingAreaBackup = null;
+    function captureSavingArea() {
+      savingAreaBackup = ctx.getImageData(0, 106, 240, 54);
+    }
     const SAVING_ANIM_X = 172, SAVING_ANIM_Y = 100, SAVING_ANIM_W = 40, SAVING_ANIM_H = 30;
 
     function startSavingAnimation() {
@@ -1805,8 +1813,12 @@
           if (isClaim) {
             alert("⚠️ 報酬の送信に失敗した可能性があります。\n詳細: " + response.message + "\n※届いていない場合はお知らせください。");
           } else {
-            // サーバーが書き込み前に弾いた場合(セッション無効など)は、スコアが保存されていない
-            alert("⚠️ エラーが発生しました。\n詳細: " + response.message + "\n※今回のスコアは保存されなかった可能性があります。");
+            // サーバーが書き込み前に弾いた場合(セッション無効など)は、スコアが保存されていない。
+            // OKを押させるポップアップは出さず、画面下に小さく知らせるだけにする
+            console.warn("[DEBUG] 通常保存でサーバーエラー:", response.message);
+            finishScoreSave();
+            showSaveNotice();
+            return;
           }
         }
         finishScoreSave();
@@ -1817,18 +1829,38 @@
           // 報酬クレームの通信失敗は、黙って進めると「届いた」と誤解されるので必ず知らせる
           alert("⚠️ 通信エラーが発生しました。\n詳細: " + (error && error.message ? error.message : error) + "\n※報酬の送信を確認できませんでした。届いていない場合はお知らせください。");
         }
-        // 通常のゲームオーバー時は、プレイヤーにできることがないので警告は出さず、そのまま次へ進む
+        // 通常のゲームオーバー時は、ポップアップは出さず、画面下に小さく知らせるだけで次へ進む
         finishScoreSave();
+        if (!isClaim) showSaveNotice();
       });
+    }
+
+    // 📢 保存に失敗した可能性があるとき、ゲーム画面の下部に白文字で小さく知らせる
+    //    (OKボタンを押させない。すぐ次のプレイに進めるようにするため)
+    function showSaveNotice() {
+      ctx.save();
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#ccc";
+      ctx.font = "bold 8px 'Courier New'";
+      ctx.fillText("SCORE MAY NOT BE SAVED", 120, 147);
+      ctx.fillText("TRY SWITCHING WI-FI / MOBILE DATA", 120, 156);
+      ctx.restore();
     }
 
     function finishScoreSave() {
       isSaving = false; 
       isClaiming = false;
       stopSavingAnimation();
+      // 歩くキャラクターと「NOW SAVING SCORE...」を消して、元の絵に戻す(黒い帯は使わない)
+      if (savingAnimBackup) {
+        ctx.putImageData(savingAnimBackup, SAVING_ANIM_X, SAVING_ANIM_Y);
+      }
+      if (savingAreaBackup) {
+        ctx.putImageData(savingAreaBackup, 0, 106);
+        savingAreaBackup = null;
+      }
       ctx.save();
       ctx.textAlign = "center";
-      ctx.fillStyle = "rgba(0,0,0,0.7)"; ctx.fillRect(0, 106, 240, 54); 
       ctx.fillStyle = "#ccc"; ctx.font = "bold 10px 'Courier New'";
       ctx.fillText("A / SPACE : REPLAY", 120, 118);
       ctx.fillText("SELECT    : MODE MENU", 120, 133);
