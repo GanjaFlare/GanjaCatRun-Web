@@ -376,17 +376,126 @@
     let jumpBufferCounter = 0;
     const JUMP_BUFFER_TIME = 10; // 先行入力を受け付けるフレーム数（約0.16秒）
 
-    function tryPlayBGM() {
-      const bgm = document.getElementById("bgmMusic");
-      if (bgm && isMusicOn) {
-        bgm.volume = 0.2;
-        if (bgm.paused) {
-          bgm.play().catch(function(e){});
+    // 🎵 BGM：<audio loop>だとループの継ぎ目に一瞬の空白が入るため、
+    //    Web Audio API(AudioBufferSourceNode)でループ再生する。うまく動かない環境では<audio>に自動で戻す
+    const BGM_VOLUME = 0.2;
+    let bgmBuffer = null;        // デコード済みの音声データ
+    let bgmLoadStarted = false;
+    let bgmSource = null;        // 再生中のAudioBufferSourceNode
+    let bgmGain = null;
+    let bgmLoopStart = 0;
+    let bgmLoopEnd = 0;
+
+    function getBgmUrl() {
+      const el = document.getElementById("bgmMusic");
+      const src = el ? el.querySelector("source") : null;
+      return src ? src.src : "iwashiro_tebasakioroshi.mp3";
+    }
+
+    function ensureAudioCtx() {
+      if (!audioCtx) {
+        try {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (AudioContextClass) audioCtx = new AudioContextClass();
+        } catch (e) {}
+      }
+      return audioCtx;
+    }
+
+    // 先頭・末尾の「ほぼ無音」の部分を検出して、その内側だけをループさせる
+    // (MP3は仕組み上、先頭と末尾に無音の余白が付くことがあり、それがループの継ぎ目の空白の正体)
+    function detectLoopRange(buffer) {
+      const threshold = 0.001;
+      const len = buffer.length;
+      let first = len, last = 0;
+      for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+        const data = buffer.getChannelData(ch);
+        for (let i = 0; i < len; i++) {
+          if (Math.abs(data[i]) > threshold) { if (i < first) first = i; break; }
         }
+        for (let i = len - 1; i >= 0; i--) {
+          if (Math.abs(data[i]) > threshold) { if (i > last) last = i; break; }
+        }
+      }
+      if (first >= last) { first = 0; last = len - 1; }
+      bgmLoopStart = first / buffer.sampleRate;
+      bgmLoopEnd = (last + 1) / buffer.sampleRate;
+    }
+
+    function loadBgmBuffer() {
+      if (bgmLoadStarted || !ensureAudioCtx()) return;
+      bgmLoadStarted = true;
+      fetch(getBgmUrl())
+        .then(function(r) { return r.arrayBuffer(); })
+        .then(function(ab) {
+          return new Promise(function(resolve, reject) {
+            audioCtx.decodeAudioData(ab, resolve, reject);   // 古いSafari向けにコールバック形式
+          });
+        })
+        .then(function(buffer) {
+          detectLoopRange(buffer);
+          bgmBuffer = buffer;
+          // 読み込み中に<audio>で鳴らし始めていた場合は、続きの位置からWeb Audio側に切り替える
+          if (isMusicOn) startBgm();
+        })
+        .catch(function(err) {
+          console.warn("[BGM] Web Audio読み込み失敗。<audio>で再生を続けます:", err);
+          bgmLoadStarted = false;
+        });
+    }
+
+    function startBgm() {
+      const el = document.getElementById("bgmMusic");
+      if (!ensureAudioCtx()) {
+        if (el) { el.volume = BGM_VOLUME; el.play().catch(function(){}); }
+        return;
+      }
+      if (audioCtx.state === "suspended") audioCtx.resume().catch(function(){});
+
+      if (!bgmBuffer) {
+        // まだ読み込み中：とりあえず<audio>で鳴らして、準備ができたら切り替える
+        loadBgmBuffer();
+        if (el) { el.volume = BGM_VOLUME; el.play().catch(function(){}); }
+        return;
+      }
+
+      // 切り替え元の<audio>の再生位置を引き継ぐ
+      let offset = bgmLoopStart;
+      if (el && !el.paused) {
+        const loopLen = bgmLoopEnd - bgmLoopStart;
+        offset = bgmLoopStart + ((el.currentTime % bgmBuffer.duration) % loopLen);
+      }
+      if (el) el.pause();
+
+      stopBgmSource();
+      bgmGain = audioCtx.createGain();
+      bgmGain.gain.value = BGM_VOLUME;
+      bgmGain.connect(audioCtx.destination);
+      bgmSource = audioCtx.createBufferSource();
+      bgmSource.buffer = bgmBuffer;
+      bgmSource.loop = true;
+      bgmSource.loopStart = bgmLoopStart;
+      bgmSource.loopEnd = bgmLoopEnd;
+      bgmSource.connect(bgmGain);
+      bgmSource.start(0, offset);
+    }
+
+    function stopBgmSource() {
+      if (bgmSource) {
+        try { bgmSource.stop(); } catch (e) {}
+        try { bgmSource.disconnect(); } catch (e) {}
+        bgmSource = null;
       }
     }
 
+    function stopBgm() {
+      stopBgmSource();
+      const el = document.getElementById("bgmMusic");
+      if (el) el.pause();
+    }
+
     function initializeEvents() {
+      loadBgmBuffer();   // BGMを先読みしておく(再生はボタンを押した時だけ)
       // 🔥 ページを開いた瞬間に、GASを軽く1回呼んで「起こして」おく
       //    (GASはしばらく使われないと次のリクエストが遅くなることがあるため、
       //     実際にプレイが始まる前の、ユーザー名入力中などの時間で先に温めておく)
@@ -470,14 +579,10 @@
           this.innerText = isMusicOn ? "🎵 ON" : "🎵 OFF";
           this.classList.toggle("is-on", isMusicOn);
           
-          const bgm = document.getElementById("bgmMusic");
-          if (bgm) {
-            if (isMusicOn) {
-              bgm.volume = 0.2;
-              bgm.play().catch(function(){});
-            } else {
-              bgm.pause();
-            }
+          if (isMusicOn) {
+            startBgm();
+          } else {
+            stopBgm();
           }
           this.blur();
         });
