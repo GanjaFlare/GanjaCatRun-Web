@@ -91,6 +91,29 @@
       text-shadow: 0 0 10px rgba(248, 113, 113, 0.8);
     }
 
+    .wallet-top { position: absolute; top: 14px; right: 14px; z-index: 20; }
+    .wallet-top-btn { display: flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #6ee7b7, #34d399); color: #052e16; border: 2px solid #052e16; border-radius: 10px; padding: 8px 16px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 14px; letter-spacing: 0.5px; cursor: pointer; touch-action: manipulation; box-shadow: 0 3px 0 #065f46, 0 0 14px rgba(52, 211, 153, 0.45); }
+    .wallet-top-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #065f46; }
+    .wallet-top-btn.on { background: #0f172a; color: #e2e8f0; border-color: #34d399; box-shadow: 0 0 12px rgba(52, 211, 153, 0.35); }
+    .wallet-top-btn.on::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #34d399; }
+    .wallet-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; background: rgba(2, 6, 23, 0.82); display: flex; justify-content: center; align-items: center; border-radius: 10px 10px 40px 10px; }
+    .wallet-box { width: 78%; box-sizing: border-box; background: #0f172a; border: 2px solid #34d399; border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 0 24px rgba(52, 211, 153, 0.35); }
+    .wallet-box-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 15px; letter-spacing: 1px; color: #6ee7b7; margin-bottom: 4px; }
+    .wallet-item { display: flex; align-items: center; gap: 10px; width: 100%; box-sizing: border-box; margin-top: 8px; padding: 10px 12px; background: #1e293b; color: #ffffff; border: 1px solid #475569; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 14px; cursor: pointer; text-align: left; touch-action: manipulation; }
+    a.wallet-item { text-decoration: none; }
+    .wallet-item img { width: 26px; height: 26px; border-radius: 6px; flex-shrink: 0; }
+    .wallet-hint { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; line-height: 1.5; color: #94a3b8; margin-top: 8px; }
+    .wallet-addr { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 13px; color: #e2e8f0; margin: 8px 0; word-break: break-all; }
+    .wallet-close { margin-top: 12px; background: transparent; color: #94a3b8; border: 1px solid #475569; padding: 6px 16px; border-radius: 8px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; touch-action: manipulation; }
+    #setupOverlay { overflow-y: auto; justify-content: safe center; }
+    .lb-panel { width: 100%; }
+    .lb-tabs { display: flex; gap: 6px; margin-bottom: 6px; }
+    .lb-tab { flex: 1; background: #0f172a; color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.35); border-radius: 8px; padding: 7px 2px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 9px; letter-spacing: 0.3px; white-space: nowrap; cursor: pointer; touch-action: manipulation; }
+    .lb-tab.on { color: #6ee7b7; border-color: #34d399; box-shadow: 0 0 10px rgba(52, 211, 153, 0.35); }
+    .lb-rows { border: 1px solid rgba(148, 163, 184, 0.35); border-radius: 8px; padding: 6px 10px; min-height: 164px; box-sizing: border-box; text-align: left; }
+    .lb-row { display: flex; justify-content: space-between; gap: 8px; font-family: 'Courier New', monospace; font-weight: 700; font-size: 11px; line-height: 15px; color: #fff; }
+    .lb-row .v { color: #ffd700; white-space: nowrap; }
+    .lb-empty { text-align: center; color: #94a3b8; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 11px; padding-top: 60px; }
     .dpad { position: absolute; left: 35px; bottom: 180px; width: 80px; height: 80px; cursor: pointer; z-index: 5; }
     .dpad-axis { position: absolute; background: #2b2b2b; border-radius: 3px; box-shadow: 0 4px 0 #111; }
     .dpad-h { top: 27px; left: 0; width: 80px; height: 26px; }
@@ -147,29 +170,6 @@
 
     #statusMessage { position: absolute; color: #333; font-size: 11px; bottom: 20px; font-weight: bold; width: 80%; text-align: center; z-index: 200; pointer-events: none;}
 
-    .share-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0, 0, 0, 0.6);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      padding: 6px;
-      font-size: 0;
-      cursor: pointer;
-      z-index: 120;
-      border-radius: 4px;
-      display: none;
-      box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-      line-height: 0;
-      transition: background 0.2s;
-    }
-    .share-btn:active {
-      transform: translateY(1px);
-      box-shadow: 0px 0px 0px rgba(0,0,0,0);
-      background: rgba(0, 0, 0, 0.8);
-    }
-
     /* 🌿 タイトル文字：白→エメラルドグリーンのグラデーション + ネオン風の光彩 */
     .title-glow {
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -192,17 +192,10 @@
     <div id="gameWrapper" class="game-wrapper">
       <div class="gameboy-body">
         
-        <button id="btnMusicToggle" class="music-btn">🎵 OFF</button>
+        <button id="btnMusicToggle" class="music-btn is-on">🎵 ON</button>
 
         <div class="gb-screen-border">
           <canvas id="gameCanvas" width="240" height="160"></canvas>
-          <button id="shareButton" class="share-btn" title="Share">
-            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-              <polyline points="16 6 12 2 8 6"></polyline>
-              <line x1="12" y1="2" x2="12" y2="15"></line>
-            </svg>
-          </button>
         </div>
         
         <div class="gb-title">Ganja Cat Run</div>
@@ -235,27 +228,31 @@
         </div>
 
         <div id="setupOverlay" class="overlay">
+          <div class="wallet-top"><button id="btnWallet" class="wallet-top-btn" type="button">CONNECT</button></div>
           <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:0;">
             <h1 class="title-glow" style="font-size: 28px; margin-bottom: 5px;">GanjaCatRun</h1>
           </div>
           <canvas id="titleWalkCanvas" width="200" height="50" style="image-rendering: pixelated; margin: 2px 0 8px;"></canvas>
-          <p style="font-size: 11px; margin-bottom: 15px; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600; letter-spacing: 0.3px; color: #a7f3d0;">Enter X (Twitter) ID to Start</p>
-          
-          <div class="input-wrapper">
-            <span class="input-at">@</span>
-            <input type="text" id="twitterInput" placeholder="YourUsername">
-            <span id="btnClearId" class="clear-btn" title="Clear ID">×</span>
-          </div>
-          
-          <div class="remember-wrapper">
-            <input type="checkbox" id="rememberId" checked>
-            <label for="rememberId">IDを記憶する</label>
-          </div>
-
           <div class="mode-buttons">
             <button id="btnNormal" class="start-btn normal-btn">NORMAL MODE (+1)</button>
             <button id="btnBoost" class="start-btn boost-btn">BOOST MODE (+2)</button>
             <button id="btnHell" class="start-btn hell-btn">HELL MODE (+10)</button>
+            <div class="lb-panel">
+              <div class="lb-tabs">
+                <button id="lbTabScore" class="lb-tab on" type="button">2WEEKS SCORE</button>
+                <button id="lbTabPlays" class="lb-tab" type="button">2WEEKS PLAYS</button>
+                <button id="lbTabLegend" class="lb-tab" type="button">LEGEND</button>
+              </div>
+              <div id="lbRows" class="lb-rows"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="walletModal" class="wallet-modal" style="display: none;">
+          <div class="wallet-box">
+            <div id="walletTitle" class="wallet-box-title">CONNECT WALLET</div>
+            <div id="walletList"></div>
+            <button id="walletClose" class="wallet-close" type="button">CLOSE</button>
           </div>
         </div>
 
@@ -263,9 +260,7 @@
           <h1 style="color:#ffd700; font-size: 24px; margin-bottom: 5px;">🎉 CLEAR!! 🎉</h1>
           <p style="font-size: 11px; margin-bottom: 15px; color: #fff;">150点達成！報酬を獲得しました！</p>
           
-          <div class="input-wrapper" style="width: 85%;">
-            <input type="text" id="walletInput" placeholder="0x... (Wallet Address)" style="padding: 12px 15px; border: 2px solid #ffd700;">
-          </div>
+          <div id="rewardWalletAddr" class="wallet-addr" style="width: 85%;"></div>
           
           <div class="mode-buttons" style="width: 85%;">
             <button id="btnClaim" class="start-btn" style="background: #ffd700; color: #000; box-shadow: 0 4px 0 #b8860b; font-weight: bold;">
@@ -336,7 +331,7 @@
 
     let activePlayTime = 0;      // 累積アクティブプレイ時間（ミリ秒）
     let lastFrameTimestamp = null;
-    let twitterId="", isPlaying=false, gameOver=false, score=0, hiScore=0, playerY=115, playerVelocityY=0, isJumping=false, obstacles=[], coins=[], gameSpeed=4.5, frameCount=0;
+    let isPlaying=false, gameOver=false, score=0, hiScore=0, playerY=115, playerVelocityY=0, isJumping=false, obstacles=[], coins=[], gameSpeed=4.5, frameCount=0;
     let isSaving = false;
     let hellLives = 3;
     let hitFlashFrames = 0;
@@ -346,6 +341,7 @@
     let obstacleSpawnChance = 0.009;
     const speedMap = [0, 3.5, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.5, 13.0, 14.0];
     let isPaused = false;
+    let confirmTitle = false;   // 「タイトル画面に戻りますか？」の確認中
     let pauseFrame = null;
     let showLeaderboard = false;
     let isLoadingLeaderboard = false;
@@ -362,7 +358,7 @@
     let particles = [];
     let isExploding = false;
 
-    let isMusicOn = false;
+    let isMusicOn = true;
 
     let isReviving = false;
     let revivalTimer = 0;
@@ -385,6 +381,8 @@
     let bgmGain = null;
     let bgmLoopStart = 0;
     let bgmLoopEnd = 0;
+    let bgmWanted = false;   // タイトル画面では false。ゲームを始めると true、タイトルに戻ると false
+    let leaving = false, unlockArmed = false;
 
     function getBgmUrl() {
       const el = document.getElementById("bgmMusic");
@@ -396,7 +394,13 @@
       if (!audioCtx) {
         try {
           const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-          if (AudioContextClass) audioCtx = new AudioContextClass();
+          if (AudioContextClass) {
+            audioCtx = new AudioContextClass();
+            // 途中で音が止められたら（電話・他アプリなど）、次の操作で再開できるよう待ち受けを作り直す
+            audioCtx.onstatechange = function() {
+              if (audioCtx && audioCtx.state !== 'running' && !leaving && isMusicOn && bgmWanted && !document.hidden) armBgmUnlock();
+            };
+          }
         } catch (e) {}
       }
       return audioCtx;
@@ -445,6 +449,8 @@
     }
 
     function startBgm() {
+      if (!isMusicOn || leaving || !bgmWanted) return;   // タイトル画面では鳴らさない
+      if (bgmSource) return;                             // すでに鳴っているなら何もしない
       const el = document.getElementById("bgmMusic");
       if (!ensureAudioCtx()) {
         if (el) { el.volume = BGM_VOLUME; el.play().catch(function(){}); }
@@ -494,6 +500,256 @@
       if (el) el.pause();
     }
 
+    // 🎵 BGMのオン／オフ：ゲームを始めた瞬間にオン、タイトル画面に戻るとオフ
+    function bgmOn() { bgmWanted = true; startBgm(); armBgmUnlock(); }
+    function bgmOff() { bgmWanted = false; stopBgm(); }
+    // iPhone対策：指を離した瞬間の操作の中で、1サンプルの無音を鳴らして音の許可を取る
+    function unlockAudio() {
+      const c = ensureAudioCtx();
+      if (!c) return;
+      if (c.state !== 'running') {
+        try { const b = c.createBuffer(1, 1, 22050), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.start(0); } catch (e) {}
+        c.resume().catch(function(){});
+      }
+    }
+    // スマホは「指を離した瞬間」の操作でしか音を許可しないため、BGMが実際に鳴るまで、毎回の操作で再開を試みる
+    function armBgmUnlock() {
+      if (unlockArmed || leaving) return;
+      unlockArmed = true;
+      const evs = ['touchend', 'pointerup', 'click', 'keydown'];
+      const h = function() {
+        if (leaving) return;
+        unlockAudio();
+        startBgm();
+        const c = audioCtx, el = document.getElementById("bgmMusic");
+        if (c && c.state === 'running' && (bgmSource || (el && !el.paused) || !isMusicOn || !bgmWanted)) {
+          evs.forEach(function(ev){ window.removeEventListener(ev, h, true); });
+          unlockArmed = false;
+        }
+      };
+      evs.forEach(function(ev){ window.addEventListener(ev, h, true); });
+    }
+    // ページを離れるとき：BGMを止めて、音の装置ごと閉じる（スマホの一時保存で鳴りっぱなしになるのを防ぐ）
+    function stopBgmAndClose() {
+      leaving = true;
+      stopBgm();
+      const c = audioCtx; audioCtx = null;
+      if (c) { try { c.onstatechange = null; const pr = c.close(); if (pr && pr.catch) pr.catch(function(){}); } catch (e) {} }
+    }
+    window.addEventListener('pagehide', function() { stopBgmAndClose(); });
+    window.addEventListener('pageshow', function(e) {
+      if (e.persisted) { leaving = false; unlockArmed = false; if (bgmWanted) { armBgmUnlock(); startBgm(); } }
+    });
+    document.addEventListener('visibilitychange', function() {
+      if (document.hidden) {
+        if (audioCtx && audioCtx.state === 'running') audioCtx.suspend().catch(function(){});
+      } else if (!leaving) {
+        if (audioCtx && audioCtx.state !== 'running') audioCtx.resume().catch(function(){});
+        if (bgmWanted) armBgmUnlock();
+      }
+    });
+
+    // ================= 👛 ウォレット接続（GCR2から移植。GCR1専用の保存キー gcr1Wallet を使う） =================
+    const FLARE_RPC = "https://flare-api.flare.network/ext/bc/C/rpc";
+    let walletAddress = "", ethProv = null, walletResolve = null, wcError = "";
+    const discovered = [];           // EIP-6963：端末にあるウォレットの一覧
+    window.addEventListener("eip6963:announceProvider", function(ev) {
+      const d = ev && ev.detail;
+      if (!d || !d.provider || !d.info) return;
+      if (!discovered.some(function(w) { return w.provider === d.provider; })) discovered.push({ name: d.info.name, icon: d.info.icon, rdns: d.info.rdns || "", provider: d.provider });
+    });
+    function discoverWallets() { try { window.dispatchEvent(new Event("eip6963:requestProvider")); } catch (e) {} }
+    discoverWallets();
+    function shortAddr(a) { return a ? a.slice(0, 6) + "…" + a.slice(-4) : ""; }
+    // ランキングに記録する名前＝接続中のウォレットアドレス（小文字にそろえる）。未接続は Guest
+    function playerIdentity() { return walletAddress ? walletAddress.toLowerCase() : "Guest"; }
+    function updateRewardUI() {   // クリア画面：接続中のアドレスを表示。未接続なら接続を促す
+      const a = document.getElementById("rewardWalletAddr"), b = document.getElementById("btnClaim");
+      if (a) a.textContent = walletAddress || "ウォレットが未接続です。接続すると報酬を受け取れます。";
+      if (b) b.textContent = walletAddress ? "CLAIM REWARD & SAVE" : "CONNECT WALLET";
+    }
+    function updateWalletUI() {
+      const b = document.getElementById("btnWallet");
+      if (b) { b.textContent = walletAddress ? shortAddr(walletAddress) : "CONNECT"; b.classList.toggle("on", !!walletAddress); }
+      updateRewardUI();
+    }
+    function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+    function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
+    function lsDel(k) { try { window.localStorage.removeItem(k); } catch (e) {} }
+    function saveWalletChoice(provider) {   // 選んだウォレットを覚える
+      if (provider && provider.isWalletConnect) { lsSet("gcr1Wallet", JSON.stringify({ wc: true })); lsDel("gcr1WalletOff"); return; }
+      let rdns = "", name = "";
+      discovered.forEach(function(w) { if (w.provider === provider) { rdns = w.rdns || ""; name = w.name || ""; } });
+      lsSet("gcr1Wallet", JSON.stringify({ rdns: rdns, name: name, injected: !rdns }));
+      lsDel("gcr1WalletOff");
+    }
+    function hookProvider(p) {
+      if (!p || !p.on || p.__gcHooked) return;
+      p.__gcHooked = true;
+      if (p.isWalletConnect) p.on("disconnect", function() { walletAddress = ""; ethProv = null; updateWalletUI(); });
+      p.on("accountsChanged", function(a) { walletAddress = (a && a[0]) || ""; if (!walletAddress) ethProv = null; updateWalletUI(); });
+    }
+    function closeWalletModal(connected) {
+      const m = document.getElementById("walletModal");
+      if (m) m.style.display = "none";
+      if (walletResolve) { const r = walletResolve; walletResolve = null; r(!!connected); }
+    }
+    function renderWalletModal() {
+      const list = document.getElementById("walletList"), title = document.getElementById("walletTitle");
+      if (!list || !title) return;
+      list.textContent = "";
+      const add = function(tag, cls, text) { const el = document.createElement(tag); el.className = cls; el.textContent = text; list.appendChild(el); return el; };
+      if (walletAddress) {
+        title.textContent = "WALLET";
+        add("div", "wallet-addr", walletAddress);
+        add("button", "wallet-item", "Disconnect").addEventListener("click", function() { if (ethProv && ethProv.isWalletConnect) { try { ethProv.disconnect(); } catch (e) {} } walletAddress = ""; ethProv = null; lsDel("gcr1Wallet"); lsSet("gcr1WalletOff", "1"); updateWalletUI(); closeWalletModal(false); });
+        return;
+      }
+      title.textContent = "CONNECT WALLET";
+      const wallets = discovered.slice();
+      if (window.ethereum && !wallets.some(function(w) { return w.provider === window.ethereum; })) wallets.push({ name: "Browser Wallet", icon: "", provider: window.ethereum });
+      if (!wallets.length) add("div", "wallet-hint", "No wallet found in this browser. Choose WalletConnect below (Bifrost, MetaMask, etc.), or open this page in your wallet app's browser.");
+      wallets.forEach(function(w) {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "wallet-item";
+        if (w.icon) { const im = document.createElement("img"); im.src = w.icon; im.alt = ""; b.appendChild(im); }
+        const sp = document.createElement("span"); sp.textContent = w.name; b.appendChild(sp);
+        b.addEventListener("click", function() { connectWith(w.provider); });
+        list.appendChild(b);
+      });
+      const wc = add("button", "wallet-item", "WalletConnect (Bifrost, MetaMask...)");
+      wc.addEventListener("click", function() { connectWithWC(); });
+      if (!wallets.length && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "")) {
+        const a = add("a", "wallet-item", "Open in MetaMask app");
+        a.href = "https://metamask.app.link/dapp/" + location.host + location.pathname + location.search;
+      }
+      if (wcError) add("div", "wallet-hint", wcError);
+    }
+    function openWalletModal() {
+      discoverWallets();
+      renderWalletModal();
+      const m = document.getElementById("walletModal");
+      if (m) m.style.display = "flex";
+    }
+    function connectWallet() { return new Promise(function(resolve) { walletResolve = resolve; openWalletModal(); }); }
+    // 🔗 WalletConnect（スマホの普通のブラウザから、Bifrost等のウォレットアプリで接続する）
+    const WC_PROJECT_ID = "824989a895bef4378cf37b0518a22e88";   // Reown Project ID（公開されても問題ないID。許可ドメインで保護）
+    const WC_MODULE_URL = "https://esm.sh/@walletconnect/ethereum-provider@2.26.0";
+    let wcPromise = null;
+    function getWcProvider() {   // 押されたときだけ読み込む（ふだんのページ表示は重くしない）
+      if (wcPromise) return wcPromise;
+      wcPromise = (async function() {
+        const mod = await import(WC_MODULE_URL);
+        const EP = mod.EthereumProvider || (mod.default && (mod.default.EthereumProvider || mod.default));
+        return await EP.init({
+          projectId: WC_PROJECT_ID,
+          optionalChains: [14],
+          rpcMap: { 14: FLARE_RPC },
+          showQrModal: true,
+          metadata: { name: "Ganja Cat Run", description: "GanjaFlare GAME CAT", url: location.origin, icons: [] }
+        });
+      })().catch(function(e) { wcPromise = null; throw e; });
+      return wcPromise;
+    }
+    async function connectWithWC() {
+      wcError = "";
+      try {
+        const p = await getWcProvider();
+        if (!p.session) await p.connect();
+        const a = p.accounts && p.accounts[0];
+        if (!a) throw new Error("no account");
+        ethProv = p; walletAddress = a;
+        hookProvider(p); updateWalletUI();
+        saveWalletChoice(p);
+        closeWalletModal(true);
+      } catch (e) {
+        ethProv = null; walletAddress = ""; updateWalletUI();
+        wcError = "WalletConnect failed or was cancelled. Please try again.";
+        renderWalletModal();
+      }
+    }
+    async function connectWith(provider) {
+      wcError = "";
+      try {
+        const acc = await provider.request({ method: "eth_requestAccounts" });
+        if (!acc || !acc[0]) throw new Error("no account");
+        ethProv = provider; walletAddress = acc[0];
+        hookProvider(provider); updateWalletUI();
+        saveWalletChoice(provider);
+        closeWalletModal(true);
+      } catch (e) {
+        ethProv = null; walletAddress = ""; updateWalletUI();
+        wcError = "Wallet connection was cancelled.";
+        renderWalletModal();
+      }
+    }
+    (function() {
+      const b = document.getElementById("btnWallet"), c = document.getElementById("walletClose");
+      if (b) b.addEventListener("click", function() { openWalletModal(); });
+      if (c) c.addEventListener("click", function() { closeWalletModal(!!walletAddress); });
+      updateWalletUI();
+    })();
+    // 🔁 以前つないだウォレットを、確認なしで自動的に再接続する（選んだウォレットも覚えている）
+    function pickSavedProvider() {
+      discoverWallets();
+      let saved = null;
+      try { saved = JSON.parse(lsGet("gcr1Wallet") || "null"); } catch (e) {}
+      if (saved) {
+        const m = discovered.filter(function(w) { return saved.rdns ? w.rdns === saved.rdns : (saved.name && w.name === saved.name); })[0];
+        if (m) return m.provider;
+        if (saved.injected && window.ethereum) return window.ethereum;
+        return null;
+      }
+      if (!lsGet("gcr1WalletOff") && window.ethereum) return window.ethereum;   // ウォレットアプリ内ブラウザ
+      return null;
+    }
+    async function tryRestoreWallet() {
+      if (walletAddress) return true;
+      let sv = null;
+      try { sv = JSON.parse(lsGet("gcr1Wallet") || "null"); } catch (e) {}
+      if (sv && sv.wc) {   // WalletConnectで接続していた場合：保存されたセッションから戻す
+        try {
+          const w = await getWcProvider();
+          if (!walletAddress && w.session && w.accounts && w.accounts[0]) { ethProv = w; walletAddress = w.accounts[0]; hookProvider(w); updateWalletUI(); return true; }
+        } catch (e) {}
+        return false;
+      }
+      const p = pickSavedProvider();
+      if (!p || !p.request) return false;
+      try {
+        const a = await p.request({ method: "eth_accounts" });
+        if (a && a[0] && !walletAddress) { ethProv = p; walletAddress = a[0]; hookProvider(p); updateWalletUI(); saveWalletChoice(p); return true; }
+      } catch (e) {}
+      return false;
+    }
+    [0, 400, 1200, 2500, 4500].forEach(function(ms) { setTimeout(function() { tryRestoreWallet(); }, ms); });   // ウォレットの検出が遅れる場合に備え、数回試す
+
+    // 🏆 タイトル画面のボード：2WEEKS SCORE／2WEEKS PLAYS／LEGEND（上位10名）
+    let lbTab = "score";
+    const lbData = { score: null, plays: null, legend: null };
+    function lbName(t) { return String(t).replace(/0x[0-9a-fA-F]{40}/g, function(a) { return a.slice(0, 6) + "\u2026" + a.slice(-4); }); }
+    function renderTitleBoard() {
+      const box = document.getElementById("lbRows"); if (!box) return;
+      box.textContent = "";
+      [["lbTabScore", "score"], ["lbTabPlays", "plays"], ["lbTabLegend", "legend"]].forEach(function(pr) {
+        const t = document.getElementById(pr[0]); if (t) t.classList.toggle("on", lbTab === pr[1]);
+      });
+      const d = lbData[lbTab];
+      if (!d || !d.length) { const e = document.createElement("div"); e.className = "lb-empty"; e.textContent = d ? "No data yet" : "Loading..."; box.appendChild(e); return; }
+      d.slice(0, 10).forEach(function(r) {
+        const row = document.createElement("div"); row.className = "lb-row";
+        const l = document.createElement("span"); l.textContent = lbName(r[0]);
+        const v = document.createElement("span"); v.className = "v"; v.textContent = r[1] + (r[2] ? " (" + r[2] + ")" : "");
+        row.appendChild(l); row.appendChild(v); box.appendChild(row);
+      });
+    }
+    function loadTitleBoard() {
+      lbData.score = null; lbData.plays = null; lbData.legend = null; renderTitleBoard();
+      callGasApi("getWinnerData").then(function(res) { lbData.score = (res && res.data) || []; renderTitleBoard(); }).catch(function() { lbData.score = []; renderTitleBoard(); });
+      callGasApi("getPlayCountData").then(function(res) { lbData.plays = (res && res.data) || []; renderTitleBoard(); }).catch(function() { lbData.plays = []; renderTitleBoard(); });
+      callGasApi("getLegendData").then(function(res) { lbData.legend = (res && res.data) || []; renderTitleBoard(); }).catch(function() { lbData.legend = []; renderTitleBoard(); });
+    }
+
     function initializeEvents() {
       loadBgmBuffer();   // BGMを先読みしておく(再生はボタンを押した時だけ)
       // 🔥 ページを開いた瞬間に、GASを軽く1回呼んで「起こして」おく
@@ -503,44 +759,31 @@
         // 結果は使わない(実際のプレイ開始時に、resetGame()側で改めて取得し直すため)
       });
 
-      try {
-        if (typeof window.localStorage !== 'undefined' && window.localStorage) {
-          const savedId = window.localStorage.getItem('ganjaCatRunId');
-          if (savedId) {
-            const tInput = document.getElementById('twitterInput');
-            const rId = document.getElementById('rememberId');
-            if (tInput) tInput.value = savedId;
-            if (rId) rId.checked = true;
-          }
-        }
-      } catch (e) {
-        console.warn("localStorage is blocked or not available");
-      }
+      loadTitleBoard();   // タイトル画面のボードを読み込む
 
       resizeGame();
 
       function attachStartBtn(btnId, modeStr) {
         const btn = document.getElementById(btnId);
         if(!btn) return;
-        btn.addEventListener("click", function(e) {
+        const press = function(e) {
           e.preventDefault();
+          unlockAudio();   // 音の許可は「指を離した瞬間」の操作の中で取る（iPhone対策）
           initAudioAndStart(modeStr);
-        });
-        btn.addEventListener("touchstart", function(e) {
-          e.preventDefault();
-          initAudioAndStart(modeStr);
-        }, {passive: false});
+        };
+        btn.addEventListener("click", press);
+        btn.addEventListener("touchend", press, {passive: false});
       }
 
       attachStartBtn("btnNormal", "NORMAL");
       attachStartBtn("btnBoost", "BOOST");
       attachStartBtn("btnHell", "HELL");
 
-      const btnClearId = document.getElementById("btnClearId");
-      if (btnClearId) {
-        btnClearId.addEventListener("click", clearSavedId);
-        btnClearId.addEventListener("touchstart", function(e){ e.preventDefault(); clearSavedId(); }, {passive: false});
-      }
+      // タイトル画面のボードのタブ切り替え
+      [["lbTabScore", "score"], ["lbTabPlays", "plays"], ["lbTabLegend", "legend"]].forEach(function(pr) {
+        const el = document.getElementById(pr[0]);
+        if (el) el.addEventListener("click", function() { lbTab = pr[1]; renderTitleBoard(); });
+      });
 
       const dpad = document.getElementById("dpadControl");
       if (dpad) {
@@ -549,6 +792,13 @@
       }
 
       // 🎯 ボタン周りの判定エリアのイベント登録（A/Bどこを押してもジャンプ）
+      // 確認中は、AボタンがYES、BボタンがNO（確認中でなければ、これまでどおりジャンプ）
+      [["btnA", true], ["btnB", false]].forEach(function(pr) {
+        const el = document.getElementById(pr[0]);
+        if (!el) return;
+        const h = function(e) { if (!confirmTitle) return; e.preventDefault(); e.stopPropagation(); answerTitleConfirm(pr[1]); };
+        el.addEventListener("mousedown", h); el.addEventListener("touchstart", h, {passive: false});
+      });
       const btnArea = document.getElementById("btnArea");
       if (btnArea) {
         btnArea.addEventListener("mousedown", function(e) {
@@ -567,11 +817,6 @@
       const startBtn = document.getElementById("btnStart");
       if (startBtn) { startBtn.addEventListener("click", togglePause); startBtn.addEventListener("touchstart", function(e){ e.preventDefault(); togglePause(); }, {passive: false}); }
 
-      const shareBtn = document.getElementById("shareButton");
-      if (shareBtn) {
-        shareBtn.addEventListener("click", shareOnX);
-      }
-      
       const btnMusicToggle = document.getElementById("btnMusicToggle");
       if (btnMusicToggle) {
         btnMusicToggle.addEventListener("click", function(e) {
@@ -594,11 +839,14 @@
           e.preventDefault();
           if (isClaiming) return; 
           
-          const walletInput = document.getElementById("walletInput");
-          const walletAddress = walletInput ? walletInput.value.trim() : "";
-          
-          if (!walletAddress.startsWith("0x") || walletAddress.length !== 42) {
-            alert("有効なウォレットアドレス（0xから始まる42桁）を入力してください。");
+          // ウォレット未接続なら、まず接続してもらう（接続後にもう一度ボタンを押す）
+          if (!walletAddress) {
+            connectWallet().then(function() { updateRewardUI(); });
+            return;
+          }
+          const claimAddress = walletAddress;
+          if (!claimAddress.startsWith("0x") || claimAddress.length !== 42) {
+            alert("有効なウォレットアドレス（0xから始まる42桁）ではありません。ウォレットを接続し直してください。");
             return;
           }
           
@@ -618,7 +866,7 @@
           
           isSaving = true;
           startSavingAnimation();
-          sendScoreToGAS(twitterId, score, gameMode, walletAddress, activePlayTime);
+          sendScoreToGAS(claimAddress.toLowerCase(), score, gameMode, claimAddress, activePlayTime);   // 名前欄にはアドレス（小文字）
         };
         btnClaim.addEventListener("click", claimHandler);
       }
@@ -629,16 +877,6 @@
     } else {
       window.addEventListener('DOMContentLoaded', initializeEvents);
       window.addEventListener('load', initializeEvents);
-    }
-
-    function clearSavedId() {
-      try {
-        if (typeof window.localStorage !== 'undefined' && window.localStorage) {
-           window.localStorage.removeItem('ganjaCatRunId');
-        }
-      } catch (e) {}
-      const tInput = document.getElementById('twitterInput');
-      if (tInput) tInput.value = '';
     }
 
     function initAudioAndStart(mode) { 
@@ -656,24 +894,7 @@
         obstacleSpawnChance = 0.007;
       }
       
-      const tInput = document.getElementById("twitterInput");
-      let rawInput = tInput ? tInput.value.trim() : "";
-      if (rawInput.startsWith('@')) { rawInput = rawInput.slice(1); }
-      
-      try {
-        if (typeof window.localStorage !== 'undefined' && window.localStorage) {
-           const rId = document.getElementById('rememberId');
-           if (rId && rId.checked && rawInput) {
-              window.localStorage.setItem('ganjaCatRunId', rawInput);
-           } else if (rId && !rId.checked) {
-              window.localStorage.removeItem('ganjaCatRunId');
-           }
-        }
-      } catch (e) {
-        console.warn("localStorage access denied.");
-      }
-
-      twitterId = rawInput ? "@" + rawInput : "@Guest";
+      bgmOn();   // ゲームをスタートした瞬間にBGMを鳴らす
 
       try {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -826,40 +1047,6 @@
           osc2.start(audioCtx.currentTime + 0.3); osc2.stop(audioCtx.currentTime + 0.55);
         }
       } catch (e) {
-      }
-    }
-
-    function shareOnX(e) {
-      e.stopPropagation(); 
-      const lines = [
-        "Played Ganja Cat Run and earned points! 🔥🐈",
-        "",
-        "Let's aim for victory together! 🏆",
-        "https://script.google.com/macros/s/AKfycbynwDqLFmF0lG4Ree0WWVEdm3Twl98SYd7Mtdi8fI7iMun3G9zAzoXA5Ohwy-t2RhJU/exec",
-        "",
-        "$GANJA $FLR #FlareNetwork"
-      ];
-      const tweetText = lines.join("\n");
-      
-      const dataUrl = canvas.toDataURL('image/png');
-      try {
-        fetch(dataUrl).then(function(response) {
-          return response.blob();
-        }).then(function(blob) {
-          const file = new File([blob], 'ganjacat_score.png', { type: 'image/png' });
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            navigator.share({ text: tweetText, files: [file] }).catch(function(err){});
-          } else {
-            const twUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
-            window.open(twUrl, '_blank');
-          }
-        }).catch(function(err) {
-          const twUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
-          window.open(twUrl, '_blank');
-        });
-      } catch (err) {
-        const twUrl = "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetText);
-        window.open(twUrl, '_blank');
       }
     }
 
@@ -1205,6 +1392,9 @@
     }
     
     function returnToTitle() {
+      confirmTitle = false;
+      bgmOff();   // タイトル画面に戻ったらBGMを止める
+      try { loadTitleBoard(); } catch (e) {}
       const overlay = document.getElementById("setupOverlay");
       if (overlay) overlay.style.display = "flex";
       const rewardOverlay = document.getElementById("rewardOverlay");
@@ -1236,9 +1426,6 @@
         statusMsg.innerText = "";
         statusMsg.style.color = "#333";
       }
-      
-      const sBtn = document.getElementById("shareButton");
-      if (sBtn) sBtn.style.display = "none";
       
       const rewardOverlay = document.getElementById("rewardOverlay");
       if (rewardOverlay) rewardOverlay.style.display = "none";
@@ -1328,7 +1515,7 @@
 
     function togglePause() {
       if (!isPlaying || gameOver || isReviving) return;
-      isPaused = !isPaused;
+      isPaused = !isPaused; confirmTitle = false;
       if (isPaused) {
         lastFrameTimestamp = null;
         showLeaderboard = false; 
@@ -1340,41 +1527,15 @@
       }
     }
 
-    function showLeaderboardScreen() {
+    function showLeaderboardScreen() {   // SELECTボタン：ポーズ中ならタイトルに戻る確認／ゲームオーバー画面ならタイトルへ
       if (gameOver) {
         if (isSaving) return;
         returnToTitle();
         return;
       }
-      if (!isPaused || showLeaderboard || isReviving) return;
-      showLeaderboard = true; 
-      isLoadingLeaderboard = true;
-      leaderboardCurrentPage = 0; 
-      leaderboardData = [null, null, null]; 
-      drawPauseScreen();
-      
-      callGasApi("getWinnerData").then(function(res) { 
-        leaderboardData[0] = (res && res.data) || []; checkLeaderboardLoad(); 
-      }).catch(function(e) { 
-        leaderboardData[0] = []; checkLeaderboardLoad(); 
-      });
-      
-      callGasApi("getPlayCountData").then(function(res) { 
-        leaderboardData[1] = (res && res.data) || []; checkLeaderboardLoad(); 
-      }).catch(function(e) { 
-        leaderboardData[1] = []; checkLeaderboardLoad(); 
-      });
-      
-      callGasApi("getLegendData").then(function(res) { 
-        leaderboardData[2] = (res && res.data) || []; checkLeaderboardLoad(); 
-      }).catch(function(e) { 
-        leaderboardData[2] = []; checkLeaderboardLoad(); 
-      });
-    }
-    
-    function checkLeaderboardLoad() {
-      isLoadingLeaderboard = false; 
-      drawPauseScreen();
+      if (confirmTitle) return;
+      if (!isPaused || isReviving) return;
+      confirmTitle = true; drawPauseScreen();
     }
 
     function drawPauseScreen() {
@@ -1382,53 +1543,27 @@
       ctx.putImageData(pauseFrame, 0, 0);
       ctx.fillStyle = "rgba(0,0,0,0.6)"; ctx.fillRect(0, 0, 240, 160);
       
-      if (!showLeaderboard) {
-        ctx.fillStyle = "#fff";
-        ctx.font = "bold 22px 'Courier New'"; ctx.textAlign = "center"; ctx.fillText("PAUSE", 120, 75);
-        ctx.font = "bold 9px 'Courier New'";
-        ctx.fillText("Press SELECT for LEADERBOARD", 120, 105);
-      } else {
-        ctx.fillStyle = "#ccc";
-        ctx.font = "bold 12px 'Courier New'"; ctx.textAlign = "center"; 
-        ctx.fillText("<", 15, 85); ctx.fillText(">", 225, 85);
-        
-        let titles = ["--- 2WEEKS SCORE ---", "--- 2WEEKS PLAYS ---", "--- LEGEND ---"];
-        ctx.fillStyle = (leaderboardCurrentPage === 2) ? "#FFD700" : "#10b981";
-        ctx.font = "bold 11px 'Courier New'"; ctx.fillText(titles[leaderboardCurrentPage], 120, 25);
-        
-        ctx.textAlign = "left";
-        ctx.font = "bold 9px 'Courier New'";
-        
-        let currentData = leaderboardData[leaderboardCurrentPage];
-        
-        if (isLoadingLeaderboard && !currentData) { 
-          ctx.fillStyle = "#fff";
-          ctx.font = "bold 14px 'Courier New'"; ctx.textAlign = "center"; ctx.fillText("Loading...", 120, 85);
-        } else if (currentData && currentData.length > 0) {
-          for (let i = 0; i < Math.min(10, currentData.length); i++) { 
-            if (currentData[i]) { 
-              let yPos = 40 + (i * 11); 
-              
-              ctx.textAlign = "left";
-              ctx.fillStyle = "#fff";
-              ctx.fillText(currentData[i][0], 15, yPos); 
-              
-              ctx.textAlign = "right";
-              ctx.fillStyle = "#ffd700";
-              let valStr = currentData[i][1];
-              if (currentData[i][2]) valStr += " (" + currentData[i][2] + ")";
-              ctx.fillText(valStr, 225, yPos);
-            } 
-          }
-        } else {
-          ctx.fillStyle = "#fff";
-          ctx.fillText("No Data / Loading...", 25, 85);
-        }
-        
-        ctx.fillStyle = "#ccc";
-        ctx.textAlign = "center"; ctx.font = "bold 8px 'Courier New'"; ctx.fillText("Press START to resume", 120, 150);
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 22px 'Courier New'"; ctx.textAlign = "center"; ctx.fillText("PAUSE", 120, 70);
+      ctx.font = "bold 9px 'Courier New'";
+      ctx.fillText("START : RESUME", 120, 100);
+      ctx.fillText("SELECT : BACK TO TITLE", 120, 114);
+      if (confirmTitle) {
+        ctx.fillStyle = "rgba(0,0,0,0.75)"; ctx.fillRect(0, 0, 240, 160);
+        ctx.fillStyle = "#0f172a"; ctx.fillRect(30, 48, 180, 66);
+        ctx.strokeStyle = "#34d399"; ctx.lineWidth = 2; ctx.strokeRect(30, 48, 180, 66);
+        ctx.textAlign = "center"; ctx.font = "bold 12px 'Courier New'";
+        ctx.fillStyle = "#ffffff"; ctx.fillText("RETURN TO TITLE?", 120, 74);
+        ctx.fillStyle = "#6ee7b7"; ctx.fillText("A : YES", 78, 100);
+        ctx.fillStyle = "#fca5a5"; ctx.fillText("B : NO", 162, 100);
       }
       ctx.textAlign = "left";
+    }
+
+    function answerTitleConfirm(yes) {
+      if (!confirmTitle) return;
+      confirmTitle = false;
+      if (yes) { returnToTitle(); } else { drawPauseScreen(); }   // NOならポーズ画面に戻る
     }
 
     function startRevivalRitual() {
@@ -1796,6 +1931,7 @@
         const rewardOverlay = document.getElementById("rewardOverlay");
         if (rewardOverlay) {
           rewardOverlay.style.display = "flex";
+          try { updateRewardUI(); } catch (e) {}
           return; 
         }
       }
@@ -1832,7 +1968,7 @@
       ctx.textAlign = "left"; 
       
       startSavingAnimation();
-      sendScoreToGAS(twitterId, score, gameMode, "", activePlayTime);
+      sendScoreToGAS(playerIdentity(), score, gameMode, "", activePlayTime);
     }
 
     // 🐱 「NOW SAVING SCORE...」の右側で、小さいキャラクターをテクテク歩かせる
@@ -1971,8 +2107,6 @@
       ctx.fillText("SELECT    : MODE MENU", 120, 133);
       ctx.restore();
       
-      const sBtn = document.getElementById("shareButton");
-      if (sBtn) sBtn.style.display = "block";
     }
 
     function resizeGame() {
@@ -1986,6 +2120,12 @@
     window.addEventListener("keydown", function(e) { 
       if (isReviving) { 
         if (e.code === "Space" || e.code === "Enter") e.preventDefault();
+        return;
+      }
+      if (confirmTitle) {
+        e.preventDefault();
+        if (e.code === "KeyA" || e.code === "KeyZ") answerTitleConfirm(true);
+        else if (e.code === "KeyB" || e.code === "KeyX" || e.code === "Escape") answerTitleConfirm(false);
         return;
       }
       if (e.code === "Space" || e.code === "ArrowUp") {
@@ -2002,7 +2142,7 @@
     });
 
     function handleCanvasInteraction(e) {
-        if (isReviving) return; 
+        if (isReviving || confirmTitle) return; 
         if (showLeaderboard) {
             const rect = canvas.getBoundingClientRect();
             let clientX = e.clientX;
